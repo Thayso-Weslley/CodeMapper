@@ -1,0 +1,23 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "target": "es2020", // Garante suporte a async/await e Promise
+        "outDir": "out",
+        "lib": [
+            "es2020", // Suporte para Promise e async/await (Erro 7)
+            "dom"     // 'dom' é frequentemente necessário em TS, mesmo em projetos Node
+        ],
+        "sourceMap": true,
+        "rootDir": "src",
+        "strict": true,
+        "esModuleInterop": true,
+        "types": ["node", "vscode"] 
+    },
+    "include": [
+        "src/**/*"
+    ],
+    "exclude": [
+        "node_modules",
+        ".vscode-test"
+    ]
+}

@@ -1,0 +1,44 @@
+{
+    "name": "codemapper",
+    "displayName": "CodeMapper",
+    "description": "VS Code extension for automated code structure and dependency mapping. Generates a formalized, cross-language document detailing module flow, data state changes, and service dependencies.",
+    "version": "0.0.1",
+    "engines": {
+        "vscode": "^1.80.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onStartupFinished"
+    ],
+    "main": "./out/extension.js",
+    "contributes": {
+        "commands": [
+            {
+                "command": "codemapper.runAnalysis",
+                "title": "CodeMapper: Re-Index Project"
+            }
+        ]
+    },
+    "scripts": {
+        "vscode:prepublish": "npm run compile",
+        "compile": "tsc -p ./",
+        "watch": "tsc -watch -p ./",
+        "pretest": "npm run compile && npm run lint",
+        "lint": "eslint src --ext ts",
+        "test": "vscode-test"
+    },
+    "devDependencies": {
+        "@types/node": "*",
+        "@types/vscode": "^1.80.0",
+        "@typescript-eslint/eslint-plugin": "^5.59.1",
+        "@typescript-eslint/parser": "^5.59.1",
+        "eslint": "^8.39.0",
+        "typescript": "^5.9.2"
+    },
+    "dependencies": {
+        "tree-sitter": "^0.21.0",
+        "tree-sitter-javascript": "^0.21.1"
+    }
+}
