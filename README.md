@@ -1,6 +1,3 @@
-É fundamental ter o documento de regras finalizado antes de começar a codificar. Ter essa especificação cristalina garante que a implementação atenda exatamente à sua visão arquitetural.
-
-Aqui está o seu documento de regras completamente atualizado com a hierarquia de visibilidade **Exportável (`++`)**, a definição clara de **Globais/Locais** e as regras de **Recuo Estrutural**:
 
 -----
 
