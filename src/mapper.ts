@@ -53,12 +53,13 @@ function generateRelationships(symbolName: string, currentFile: string): string[
             line += ` <= ${rel.calleeLocation.fileName}`;
         }
         
-        // Adiciona a linha (SEM tabulação) ao Set para garantir a unicidade
+        // Adiciona a linha (SEM formatação inicial) ao Set
         uniqueRelationshipLines.add(line);
     }
     
-    // Converte o Set de volta para um array de strings e adiciona a tabulação e o hífen.
-    return Array.from(uniqueRelationshipLines).map(line => `\t\t- ${line}`);
+    // Converte o Set de volta para um array de strings e adiciona a formatação correta.
+    // Usamos 4 espaços para alinhamento após a tabulação.
+    return Array.from(uniqueRelationshipLines).map(line => `${line}`); 
 }
 
 

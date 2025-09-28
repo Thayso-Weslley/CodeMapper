@@ -215,21 +215,26 @@ function traceDependencies(document: vscode.TextDocument) {
             // 1. A variável deve ser um Símbolo do Projeto (indexada).
             const variableLocation = globalSymbolMap.get(variableName);
 
-            // 2. Não deve ser uma declaração (evita let x = ...) nem a si mesmo.
+            // 2. Não deve ser uma declaração, nem o nome de uma propriedade.
             const parentType = node.parent ? node.parent.type : null;
-            const isDeclaration = parentType === 'variable_declarator' || parentType === 'function_declaration' || parentType === 'class_declaration' || parentType === 'property_identifier';
+            const isDeclarationOrProperty = parentType === 'variable_declarator' || 
+                                            parentType === 'function_declaration' || 
+                                            parentType === 'class_declaration' || 
+                                            parentType === 'property_identifier';
             
-            // 3. Não deve ser ruído nativo
-            const isIgnoredNative = IGNORED_NATIVE_SYMBOLS.has(variableName);
+            // 3. Não deve ser ruído nativo ou global API
+            const isIgnored = IGNORED_NATIVE_SYMBOLS.has(variableName) || variableName === 'document' || variableName === 'window';
 
-            // 4. Não rastreamos 'document' ou 'window' para este tipo de acesso (se quiser filtrar mesmo o document)
-            const isGlobalApi = variableName === 'document' || variableName === 'window';
+            // 4. CRUCIAL: Evita duplicar se esta variável for o *alvo* de uma MemberExpression ou CallExpression
+            // Se o pai é uma call_expression, já processamos o nome da função/variável no bloco B.
+            // Se o pai é uma member_expression (ex: clientes.find), já processamos o nome da função no bloco B.
+            const isCalleeTarget = parentType === 'call_expression' || parentType === 'member_expression';
 
-            if (variableLocation && !isDeclaration && !localCallableSymbols.has(variableName) && !isIgnoredNative && !isGlobalApi) {
+            if (variableLocation && !isDeclarationOrProperty && !localCallableSymbols.has(variableName) && !isIgnored && !isCalleeTarget) {
 
-                let relationship: CallRelationship = {
+                 let relationship: CallRelationship = {
                     callerSymbol: currentFunctionName,
-                    calleeSymbol: variableName,
+                    calleeSymbol: variableName, 
                     callerFile: fileName,
                 };
                 globalRelationshipMap.push(relationship);
