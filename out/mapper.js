@@ -64,24 +64,20 @@ function getVariableTypeSymbol(type) {
  * Monta as relações de Serviço (função < função) e Estado (função > variável) para um único símbolo.
  */
 function generateRelationships(symbolName, currentFile) {
-    const relationships = [];
-    // Filtra as relações onde o símbolo atual é o CHAMADOR (Cliente: função A < função B)
+    // Filtra as relações onde o símbolo atual é o CHAMADOR
     const clientRelations = analyzer_1.globalRelationshipMap.filter(rel => rel.callerSymbol === symbolName && rel.callerFile === currentFile);
-    // ------------------------------------
-    // Geração da Notação: FUNÇÃO < FUNÇÃO (Cliente/Dependência)
-    // ------------------------------------
+    // Usa um Set para garantir que cada relação única (chamador -> callee) seja listada apenas uma vez.
+    const uniqueRelationshipLines = new Set();
     for (const rel of clientRelations) {
-        let line = `função() < ${rel.calleeSymbol}()`;
-        // Se a função chamada está em outro arquivo, adiciona a referência externa (<=)
+        let line = `${rel.callerSymbol}() < ${rel.calleeSymbol}()`;
         if (rel.calleeLocation && rel.calleeLocation.fileName !== currentFile) {
             line += ` <= ${rel.calleeLocation.fileName}`;
         }
-        relationships.push(line);
+        // Adiciona a linha (SEM tabulação) ao Set para garantir a unicidade
+        uniqueRelationshipLines.add(line);
     }
-    // NOTA IMPORTANTE: A regra 'função() > função()' (Prestador) e 'função() > variável' (Estado) 
-    // exige uma análise mais complexa de todo o mapa. Por enquanto, focamos na dependência direta (Cliente). 
-    // Isso é o suficiente para ter uma base funcional.
-    return relationships;
+    // Converte o Set de volta para um array de strings e adiciona a tabulação e o hífen.
+    return Array.from(uniqueRelationshipLines).map(line => `\t\t- ${line}`);
 }
 // ----------------------------------------------------------------------
 // 3. Função Principal: Geração do Documento
